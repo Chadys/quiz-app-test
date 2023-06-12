@@ -1,9 +1,10 @@
 # Prerequisites
-## task
+## Scripting utility : task
 ```bash
+# if not using a mac, search for your platform installation method
 brew install go-task/tap/go-task
 ```
-## project dependencies
+## Project dependencies
 Only needed to commit to this project, not needed to run it
 ```bash
 task install-dependencies
@@ -36,15 +37,17 @@ task init-app
 # Run the app after first initialisation (it is advised to set up your IDE to run the app instead)
 task up
 ```
-Also setup the IDE's project interpreter to a docker-compose configuration, using [buildrun/docker/docker-compose/dev-env/docker-compose.yml](buildrun/docker/docker-compose/dev-env/docker-compose.yml)
+## Pycharm setup
+Set project interpreter to a docker-compose configuration, using [buildrun/docker/docker-compose/dev-env/docker-compose.yml](buildrun/docker/docker-compose/dev-env/docker-compose.yml)
 service `web` and name it `quiz_app-web DEV`
+The `quiz_app` run configuration should work as is after that
 
 
 ## Network configuration
-Ports [80, 443, 9090, 5432] must be available on your machine.
+Ports [80, 443, 5432] must be available on your machine.
 
 ### DNS
-On a mac, add the following rule to `/etc/hosts`:
+On a Unix machine, add the following rule to `/etc/hosts`:
 ```
 127.0.0.1	local-quizapp.amarena.ovh
 ```
@@ -52,7 +55,7 @@ On a mac, add the following rule to `/etc/hosts`:
 ### Certificate
 To be able to correctly run your website in HTTPS without your browser protesting about an invalid
 certificate, you'll need to manually add and trust the Caddy root certificate located [here](buildrun/docker/caddy/.caddy/data/caddy/pki/authorities/local/root.crt)
-On a Mac, simply open this file using Keychain Access, then double-click on the certificate
+On a Mac, simply open this file using Keychain Access, then double-click on the certificate called "Caddy Local Authority"
 once it has been added to System keychain, and in the Trust settings select "Always Trust".
 If your browser still display the certificate as invalid after that, restart your browser.
 
@@ -60,8 +63,14 @@ If your browser still display the certificate as invalid after that, restart you
 Don't use `localhost` as you'll have errors with the HTTPS configuration.
 - quiz_app website: https://local-quizapp.amarena.ovh/ (if you get a warning about invalid certificate, see previous section)
 - quiz_app openAPI interface: https://local-quizapp.amarena.ovh/api/v1/schema/swagger-ui/
-- LDAP Admin: http://local-quizapp.amarena.ovh:9090/ (login DN is "cn=readonly,dc=amarena,dc=ovh", pwd in `AUTH_LDAP_BIND_PASSWORD` of [dev.env](buildrun/docker/quiz_app/dev.env))
 
+
+# Quiz application's gotcha
+
+- If you get CORS error when trying to call this backend from a SPA, check that the domain name used to run your SPA
+  is put inside [`CORS_ALLOWED_ORIGINS`](buildrun/docker/quiz_app/dev.env) (restart the backend if you changed this setting, the chosen default is standard for angular app run locally)
+  and that you get no certificate error when trying to [access the app from your browser](https://local-quizapp.amarena.ovh/api/v1/schema/swagger-ui/)
+- The questions are automatically ordered by insertion date, using the [`order_with_respect_to` django's mechanism](https://docs.djangoproject.com/en/4.0/ref/models/options/#order-with-respect-to)
 
 # How to add a new Python package requirement
 
