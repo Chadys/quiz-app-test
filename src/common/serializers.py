@@ -1,4 +1,3 @@
-from django.conf import settings
 from drf_spectacular.contrib.rest_framework_simplejwt import (
     TokenRefreshSerializerExtension,
     TokenObtainPairSerializerExtension,
