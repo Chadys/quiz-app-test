@@ -1,9 +1,5 @@
 version: '3'
 tasks:
-  push:
-    - docker-compose push web
-  pull:
-    - docker-compose pull web
   restart-caddy:
     - docker-compose restart caddy
   stop-all:

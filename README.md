@@ -1,3 +1,6 @@
+# Description
+See [tech_tests folder](tech_tests) for tests content
+
 # Prerequisites
 ## Scripting utility : task
 ```bash
@@ -85,6 +88,3 @@ docker-compose up -d --no-recreate --build web
 ```
 **/!\ The compile-dep service also do an upgrade of all package,
 remove the `--upgrade` option in the docker-compose file from all the commands called to avoid that**
-
-~~Don't forget to execute `task push` once you are done~~ -> not possible for now, because we don't all use the same
-architecture for images (ARM vs. Intel)
