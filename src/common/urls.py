@@ -7,7 +7,6 @@ from .views import (
     BlacklistRefreshView,
     health_check,
 )
-from .utils import add_api_url
 
 urlpatterns = [
     path("health_check/", health_check, name="health-check"),
@@ -42,4 +41,3 @@ if settings.SHOW_SWAGGER:
             ),
         ]
     )
-urlpatterns = add_api_url(urlpatterns)
