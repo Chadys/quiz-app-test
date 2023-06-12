@@ -1,0 +1,123 @@
+include:
+  project: 'amarena/template-ci'
+  file: '/base.yml'
+
+stages:
+  - build-and-deploy-docker-test-image
+  - test
+  - MR-master-staging
+  - make-tag
+  - build-and-deploy-docker-image
+  - release
+  - prepare-deploy
+  - deploy
+  - sentry
+  - notify
+  - MR-staging-production
+  - MR-production-staging
+
+
+build-and-deploy-docker-test-image:
+  extends: .build-and-push-docker-image-base
+  stage: build-and-deploy-docker-test-image
+  variables:
+    PATH_DOCKER_FILE: ${CI_PROJECT_DIR}/buildrun/docker/quiz_app/Dockerfile
+    PATH_CONTEXT: ${CI_PROJECT_DIR}
+    BUILD_TEST: "true"
+    BUILD_STAGE_TARGET: test-image
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "production" && $CI_COMMIT_BRANCH != "staging"'
+      changes:
+        - "buildrun/docker/quiz_app/Dockerfile"
+        - "buildrun/docker/quiz_app/requirements/test-requirements.txt"
+    - if: '($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web") && ($CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "production" && $CI_COMMIT_BRANCH != "staging") && $SHOULD_BUILD_TEST_IMG'
+  environment:
+    name: deploy/dev
+    action: prepare
+
+.test:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/test:${CI_COMMIT_BRANCH}
+  services:
+    - name: timescale/timescaledb:latest-pg14
+      alias: db
+  variables:
+    DJANGO_SETTINGS_MODULE: configurations.test-settings
+    POSTGRES_DB: test_db
+    POSTGRES_USER: test_user
+    POSTGRES_PASSWORD: test_pwd
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "production" && $CI_COMMIT_BRANCH != "staging"'
+  environment:
+    name: deploy/dev
+    action: prepare
+
+
+check-migration:
+  extends: .test
+  script:
+    - cd ${CI_PROJECT_DIR}/src && python manage.py makemigrations --check
+
+test-dev:
+  extends: .test
+  retry:
+    max: 2
+    when:
+      - script_failure
+  script:
+    - cd ${CI_PROJECT_DIR}/src && python manage.py migrate
+    - cd ${CI_PROJECT_DIR}/src && pytest --cov --cov-report=xml:coverage-report.xml  --cov-report term --no-cov-on-fail --junitxml=pytest-report.xml
+  coverage: '/^TOTAL.+?(\d+\%)$/'
+  artifacts:
+    reports:
+      junit: $CI_PROJECT_DIR/src/pytest-report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: $CI_PROJECT_DIR/src/coverage-report.xml
+    paths:
+      - $CI_PROJECT_DIR/src/pytest-report.xml
+      - $CI_PROJECT_DIR/src/coverage-report.xml
+
+MR-master-staging:
+  extends: .pull-master-into-staging-base
+  stage: MR-master-staging
+
+make-tag:
+  extends: .make-tag-base
+  stage: make-tag
+
+build-and-deploy-docker-image:
+  extends: .build-and-push-docker-image-base
+  stage: build-and-deploy-docker-image
+  variables:
+    PATH_DOCKER_FILE: ${CI_PROJECT_DIR}/buildrun/docker/quiz_app/Dockerfile
+    PATH_CONTEXT: ${CI_PROJECT_DIR}
+    BUILD_STAGE_TARGET: production-image
+
+release:
+  extends: .release-base
+  stage: release
+  dependencies:
+    - make-tag
+
+
+deploy:
+  stage: deploy
+  extends: .deploy-base-without-values
+  variables:
+    K8S_NAMESPACE: $CI_PROJECT_NAME-$ENV_NAME
+    PATH_TAG: "appVersion"
+  dependencies:
+    - make-tag
+
+MR-staging-production:
+  extends: .pull-staging-into-production-base
+  stage: MR-staging-production
+
+MR-production-staging:
+  extends: .pull-production-into-staging-base
+  stage: MR-production-staging
+
+sentry:
+  extends: .sentry-base
+  stage: sentry

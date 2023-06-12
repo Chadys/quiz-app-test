@@ -1,0 +1,88 @@
+version: '3.9'
+
+services:
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+#      - "8383:8383"
+    volumes:
+      - ../../caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ../../caddy/.caddy/config/:/config/
+      - ../../caddy/.caddy/data/:/data/
+    networks:
+      - web
+
+
+  db:
+    image: timescale/timescaledb:latest-pg14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=quiz_app
+      - POSTGRES_USER=quiz_app_user
+      - POSTGRES_PASSWORD=quiz_app_pwd
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    # https://docs.djangoproject.com/en/3.0/ref/databases/#optimizing-postgresql-s-configuration
+    command: postgres -c client_encoding="UTF8" -c default_transaction_isolation="read committed" -c timezone="UTC"
+    networks:
+      - db
+
+
+  web:
+    build:
+      context: ../../../..
+      dockerfile: buildrun/docker/quiz_app/Dockerfile
+      target: dev-image
+    image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:develop
+    command: python manage.py runserver 0.0.0.0:8000 --settings=configurations.dev-settings
+    volumes:
+      - code:/code
+    env_file:
+      - ../../quiz_app/dev.env
+      - ../../quiz_app/secrets.env
+    tty: true
+    depends_on:
+      - caddy
+      - db
+    networks:
+      - db
+      - web
+
+  compile-dep:
+    build:
+      context: ../../../..
+      dockerfile: buildrun/docker/quiz_app/Dockerfile
+      target: base-image
+    image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:compile
+    restart: on-failure
+    profiles:
+      - compile
+    command: >
+      sh -c
+      "pip-compile --upgrade --output-file requirements/base-requirements.txt requirements/base-requirements.in &&
+      pip-compile --upgrade --output-file requirements/test-requirements.txt requirements/test-requirements.in &&
+      pip-compile --upgrade --output-file requirements/dev-requirements.txt requirements/dev-requirements.in &&
+      pip-compile --upgrade --output-file requirements/prod-requirements.txt requirements/prod-requirements.in"
+    volumes:
+      - ../../quiz_app/requirements/:/code/requirements/
+
+volumes:
+  postgres:
+  code:
+
+networks:
+  db:
+  web:
+  auth:
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+    code:
+      alpha: "../../../../src"
+      beta: "volume://code"

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: timescale/timescaledb:latest-pg14
+    environment:
+      - POSTGRES_DB=test_db
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test_pwd
+    # https://docs.djangoproject.com/en/3.0/ref/databases/#optimizing-postgresql-s-configuration
+    command: postgres -c client_encoding="UTF8" -c default_transaction_isolation="read committed" -c timezone="UTC"
+
+  test:
+    build:
+      context: ../../../..
+      dockerfile: ../../quiz_app/Dockerfile
+      target: test-image
+    image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:local-test
+    volumes:
+      - ../../../../src:/code
+    depends_on:
+      - solr
+      - db
+      - redis
