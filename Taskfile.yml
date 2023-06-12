@@ -6,13 +6,6 @@ includes:
     dir: ./buildrun/docker/docker-compose/dev-env/
 
 tasks:
-  install-mutagen:
-    - brew install mutagen-io/mutagen/mutagen
-    - mutagen daemon stop
-    - sleep 5
-    - mutagen daemon register
-    - mutagen daemon start
-    - brew install mutagen-io/mutagen/mutagen-compose
   install-precommit:
     - brew install pre-commit
     - pre-commit install
@@ -21,6 +14,5 @@ tasks:
   install-dependencies:
     desc: install needed dependencies for this project
     cmds:
-      - task: install-mutagen
       - task: install-precommit
       - task: install-black

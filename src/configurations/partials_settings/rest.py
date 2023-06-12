@@ -10,7 +10,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "common.authentication.JWTTokenUserWithPermissionsAuthentication",
     ],
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
@@ -61,7 +61,7 @@ if SHOW_SWAGGER:
     if INTERACTIVE_SWAGGER:
         REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
             # "rest_framework.renderers.BrowsableAPIRenderer"
-            "configurations.utils.BrowsableAPIRendererWithoutForms"
+            "common.renderers.BrowsableAPIRendererWithoutForms"
         )
         SPECTACULAR_SETTINGS["SWAGGER_UI_SETTINGS"]["tryItOutEnabled"] = True
     else:

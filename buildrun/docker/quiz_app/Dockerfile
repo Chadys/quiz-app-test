@@ -3,12 +3,6 @@ FROM python:3.10.2-buster as base-image
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update &&\
-  apt-get install -y --no-install-recommends\
-     # python-ldap dependencies
-     build-essential=12.6 libldap2-dev=2.4.47+dfsg-3+deb10u6 libsasl2-dev=2.1.27+dfsg-1+deb10u2 &&\
-  apt-get clean && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man
-
 RUN pip install --no-cache-dir pip-tools==6.6.0
 WORKDIR /code
 

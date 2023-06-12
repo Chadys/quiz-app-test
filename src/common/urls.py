@@ -12,17 +12,17 @@ from .utils import add_api_url
 urlpatterns = [
     path("health_check/", health_check, name="health-check"),
     # Auth
-    re_path(
-        r"^token/?$",
-        FullInfoTokenObtainPairView.as_view(),
-        name="token_obtain_pair",
-    ),
-    re_path(
-        r"^token/refresh/?$", DbSyncTokenRefreshView.as_view(), name="token_refresh"
-    ),
-    re_path(
-        r"^token/blacklist/?$", BlacklistRefreshView.as_view(), name="blacklist_refresh"
-    ),
+    # re_path(
+    #     r"^token/?$",
+    #     FullInfoTokenObtainPairView.as_view(),
+    #     name="token_obtain_pair",
+    # ),
+    # re_path(
+    #     r"^token/refresh/?$", DbSyncTokenRefreshView.as_view(), name="token_refresh"
+    # ),
+    # re_path(
+    #     r"^token/blacklist/?$", BlacklistRefreshView.as_view(), name="blacklist_refresh"
+    # ),
 ]
 
 

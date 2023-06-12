@@ -13,7 +13,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from .partials_settings.base import *  # noqa
-from .partials_settings.ldap import *  # noqa
 from .partials_settings.rest import *  # noqa
 from .partials_settings.security import *  # noqa
 
@@ -118,11 +117,6 @@ LOGGING = {
         },
         # django database logs
         "django.db.backends": {
-            "level": SQL_LOGLEVEL,
-            "handlers": ["console"],
-            "propagate": False,
-        },
-        "django_auth_ldap": {
             "level": SQL_LOGLEVEL,
             "handlers": ["console"],
             "propagate": False,

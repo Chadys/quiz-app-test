@@ -37,7 +37,6 @@ class DbSyncTokenRefreshSerializer(TokenRefreshSerializer):
     """
     Override parent to check on user in db, to prevent desync between TokenUser and saved data.
     This is needed because with TokenUser there is never any db call,
-    as well as to add a check for user's group modification in ldap (which is only done at login otherwise).
     """
 
     def validate(self, attrs):
@@ -76,29 +75,11 @@ class DbSyncTokenRefreshSerializer(TokenRefreshSerializer):
             user = get_user_model().objects.get(**{api_settings.USER_ID_FIELD: user_id})
         except get_user_model().DoesNotExist:
             raise AuthenticationFailed("User not found", code="user_not_found")
-        old_permissions = token["permissions"]
         token["permissions"] = set()
         token = self.sync_token_user_main_attr(token, user)
 
-        if settings.AUTH_LDAP_BIND_AS_AUTHENTICATING_USER:
-            # we can't resync with ldap without a service user,
-            # unsatisfactory solution: put back previous permissions instead
-            # This means that a user won't ever lose a permissions as long as they don't disconnect
-            token["permissions"] |= set(old_permissions)
-        else:
-            token = self.sync_token_user_with_ldap(token, username)
-
         token["permissions"] = list(token["permissions"])
         return token
-
-    def sync_token_user_with_ldap(self, token, username):
-        from django_auth_ldap.backend import LDAPBackend
-
-        # populate_user also update user in db
-        user = LDAPBackend().populate_user(username)
-        if user is None:
-            raise TokenError("LDAP resync error")
-        return self.sync_token_user_main_attr(token, user)
 
     @staticmethod
     def sync_token_user_main_attr(token, user):

@@ -39,7 +39,6 @@ dj-email-url==1.0.5
 django[argon2]==4.0.4
     # via
     #   -r requirements/base-requirements.txt
-    #   django-auth-ldap
     #   django-cors-headers
     #   django-csp
     #   django-filter
@@ -47,8 +46,6 @@ django[argon2]==4.0.4
     #   djangorestframework-simplejwt
     #   drf-extra-fields
     #   drf-spectacular
-django-auth-ldap==4.0.0
-    # via -r requirements/base-requirements.txt
 django-cache-url==3.4.0
     # via
     #   -r requirements/base-requirements.txt
@@ -93,15 +90,6 @@ packaging==21.3
     #   marshmallow
 psycopg2-binary==2.9.3
     # via -r requirements/base-requirements.txt
-pyasn1==0.4.8
-    # via
-    #   -r requirements/base-requirements.txt
-    #   pyasn1-modules
-    #   python-ldap
-pyasn1-modules==0.2.8
-    # via
-    #   -r requirements/base-requirements.txt
-    #   python-ldap
 pycparser==2.21
     # via
     #   -r requirements/base-requirements.txt
@@ -122,10 +110,6 @@ python-dotenv==0.20.0
     # via
     #   -r requirements/base-requirements.txt
     #   environs
-python-ldap==3.4.0
-    # via
-    #   -r requirements/base-requirements.txt
-    #   django-auth-ldap
 pytz==2022.1
     # via
     #   -r requirements/base-requirements.txt

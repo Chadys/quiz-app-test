@@ -7,6 +7,7 @@ from .base import *
 SECRET_KEY = env.str("SECRET_KEY")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[], subcast=str)
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[], subcast=str)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=True)
@@ -40,6 +41,9 @@ CSP_SCRIPT_SRC = env.list(
     "CSP_SCRIPT_SRC",
     default=[
         "'self'",
+        # swagger
+        "'unsafe-inline'",
+        "cdn.jsdelivr.net",
     ],
     subcast=str,
 )
@@ -47,6 +51,9 @@ CSP_STYLE_SRC = env.list(
     "CSP_STYLE_SRC",
     default=[
         "'self'",
+        # swagger
+        "'unsafe-inline'",
+        "cdn.jsdelivr.net",
     ],
     subcast=str,
 )
@@ -54,6 +61,9 @@ CSP_IMG_SRC = env.list(
     "CSP_IMG_SRC",
     default=[
         "'self'",
+        # swagger
+        "data:",
+        "cdn.jsdelivr.net",
     ],
     subcast=str,
 )

@@ -17,7 +17,7 @@ ENV_MODE = env.enum("ENV_MODE", default="PROD", type=EnvMode)
 SITE_ID = 1
 
 SITE_NAME = env.str("SITE_NAME", default="Quiz app")
-SITE_DOMAIN = env.str("SITE_DOMAIN", default="local-quiz_app.amarena.ovh")
+SITE_DOMAIN = env.str("SITE_DOMAIN", default="local-quizapp.amarena.ovh")
 
 # App distribution
 WSGI_APPLICATION = "configurations.wsgi.application"

@@ -39,10 +39,9 @@ services:
     image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:develop
     command: python manage.py runserver 0.0.0.0:8000 --settings=configurations.dev-settings
     volumes:
-      - code:/code
+      - ../../../../src:/code
     env_file:
       - ../../quiz_app/dev.env
-      - ../../quiz_app/secrets.env
     tty: true
     depends_on:
       - caddy
@@ -71,18 +70,7 @@ services:
 
 volumes:
   postgres:
-  code:
 
 networks:
   db:
   web:
-  auth:
-
-x-mutagen:
-  sync:
-    defaults:
-      ignore:
-        vcs: true
-    code:
-      alpha: "../../../../src"
-      beta: "volume://code"

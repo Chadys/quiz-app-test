@@ -6,7 +6,6 @@ django-filter
 django-cors-headers
 django-csp
 djangorestframework-simplejwt
-django-auth-ldap
 drf-extra-fields
 drf_spectacular
 sentry_sdk
