@@ -1,7 +1,7 @@
 from pytest_mock import MockerFixture
 from quiz.models import Question
 
-from src.quiz.services import QuizService
+from quiz.services import QuizService
 
 
 class TestQuestion:

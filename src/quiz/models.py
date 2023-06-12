@@ -1,7 +1,7 @@
 import re
 from django.db import models
 
-from src.common.utils import convert_to_ascii
+from common.utils import convert_to_ascii
 
 
 class Quiz(models.Model):
