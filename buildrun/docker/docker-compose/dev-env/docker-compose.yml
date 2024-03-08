@@ -36,7 +36,7 @@ services:
       context: ../../../..
       dockerfile: buildrun/docker/quiz_app/Dockerfile
       target: dev-image
-    image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:develop
+    image: gitlab.domain.ovh/dev/quiz-app:develop
     command: python manage.py runserver 0.0.0.0:8000 --settings=configurations.dev-settings
     volumes:
       - ../../../../src:/code
@@ -55,7 +55,7 @@ services:
       context: ../../../..
       dockerfile: buildrun/docker/quiz_app/Dockerfile
       target: base-image
-    image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:compile
+    image: gitlab.domain.ovh/dev/quiz-app:compile
     restart: on-failure
     profiles:
       - compile

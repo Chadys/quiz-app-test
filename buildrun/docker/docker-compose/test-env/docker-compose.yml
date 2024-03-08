@@ -16,7 +16,7 @@ services:
       context: ../../../..
       dockerfile: ../../quiz_app/Dockerfile
       target: test-image
-    image: gitlab.amarena.ovh:4567/amarena/dev/quiz-app:local-test
+    image: gitlab.domain.ovh/dev/quiz-app:local-test
     volumes:
       - ../../../../src:/code
     depends_on:

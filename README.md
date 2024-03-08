@@ -19,14 +19,6 @@ Only needed to commit to this project, not needed to run it
 
 Please keep your version of black always up-to-date (`pip install black -U` to upgrade)
 
-## Login to gitlab
-To be able to push and pull dev image, first you'll need to authenticate
-or you'll have an "denied: access forbidden error"
-```bash
-# use your LDAP credentials when asked for it
-docker login gitlab.amarena.ovh:4567
-```
-
 # How to run
 ## Preparation
 ```shell
@@ -52,7 +44,7 @@ Ports [80, 443, 5432] must be available on your machine.
 ### DNS
 On a Unix machine, add the following rule to `/etc/hosts`:
 ```
-127.0.0.1	local-quizapp.amarena.ovh
+127.0.0.1	local-quizapp.domain.ovh
 ```
 
 ### Certificate
@@ -64,15 +56,15 @@ If your browser still display the certificate as invalid after that, restart you
 
 ### Urls
 Don't use `localhost` as you'll have errors with the HTTPS configuration.
-- quiz_app website: https://local-quizapp.amarena.ovh/ (if you get a warning about invalid certificate, see previous section)
-- quiz_app openAPI interface: https://local-quizapp.amarena.ovh/api/v1/schema/swagger-ui/
+- quiz_app website: https://local-quizapp.domain.ovh/ (if you get a warning about invalid certificate, see previous section)
+- quiz_app openAPI interface: https://local-quizapp.domain.ovh/api/v1/schema/swagger-ui/
 
 
 # Quiz application's gotcha
 
 - If you get CORS error when trying to call this backend from a SPA, check that the domain name used to run your SPA
   is put inside [`CORS_ALLOWED_ORIGINS`](buildrun/docker/quiz_app/dev.env) (restart the backend if you changed this setting, the chosen default is standard for angular app run locally)
-  and that you get no certificate error when trying to [access the app from your browser](https://local-quizapp.amarena.ovh/api/v1/schema/swagger-ui/)
+  and that you get no certificate error when trying to [access the app from your browser](https://local-quizapp.domain.ovh/api/v1/schema/swagger-ui/)
 - The questions are automatically ordered by insertion date, using the [`order_with_respect_to` django's mechanism](https://docs.djangoproject.com/en/4.0/ref/models/options/#order-with-respect-to)
 
 # How to add a new Python package requirement

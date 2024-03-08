@@ -1,5 +1,5 @@
 include:
-  project: 'amarena/template-ci'
+  project: 'template-ci'
   file: '/base.yml'
 
 stages:
